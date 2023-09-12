@@ -7,7 +7,9 @@ class CartController{
         try {
             const products = await cartsRepository.getCartProducts(cid)
             const response = successResponse(products)
-            res.status(HTTP_STATUS.OK).send(response)
+            
+            return res.status(HTTP_STATUS.OK).render("carts", {products})
+            //return res.status(HTTP_STATUS.OK).send(response)
         } catch (error){
             next(error)
         }
@@ -30,7 +32,7 @@ class CartController{
         try {
             const addedProduct = await cartsRepository.addProductToCart(cid, pid)
             const response = successResponse(addedProduct)
-            res.status(HTTP_STATUS.OK).send(response) 
+            res.status(HTTP_STATUS.OK).send(response)
         } catch (error){
             next(error)
         }

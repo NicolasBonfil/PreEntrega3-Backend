@@ -24,9 +24,9 @@ class ProductsRepository{
 
     async addProduct(product){
         try {
-            return await productsDAO.addProduct()
+            return await productsDAO.addProduct(product)
         } catch {
-            const products = await productsDAO.getLeanProducts(product)
+            const products = await productsDAO.getLeanProducts()
             const existsProduct = products.find(p => p.code == code)
             if(existsProduct){
                 throw new HttpError("El producto ya esta registrado", HTTP_STATUS.BAD_REQUEST)

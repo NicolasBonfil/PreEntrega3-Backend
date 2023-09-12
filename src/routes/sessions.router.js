@@ -17,6 +17,27 @@ router.post("/register", passport.authenticate("register", {passReqToCallback: t
     res.status(200).send({status: "success", message: "Usuario registrado", payload: req.user._id})
 })
 
+// router.post("/login", passport.authenticate("login", {passReqToCallback: true, session: false, failureRedirect: "/api/session/failedLogin", failureMessage: true}), (req, res) => {
+//     const serialUser = {
+//         id: req.user.id,
+//         name: `${req.user.first_name}`,
+//         role: req.user.role,
+//         email: req.user.email
+//     }
+
+//     const email = req.user.email
+//     const role = req.user.role
+
+//     const access_token = generateToken({email, role: role})
+
+//     res.cookie("CoderCookie", access_token, {
+//         maxAge: 60*60*1000,
+//         httpOnly: true
+//     })
+
+//     res.status(200).send({status:"success", payload: serialUser})
+// })
+
 router.post("/login", passport.authenticate("login", {passReqToCallback: true, session: false, failureRedirect: "/api/session/failedLogin", failureMessage: true}), (req, res) => {
     const user = req.user
     const access_token = generateToken(user)
@@ -63,9 +84,9 @@ router.get("/githubCallback", passport.authenticate("github", {failureRedirect: 
 
 
 router.post("/logout", (req, res, next) => {
-    console.log(req.session);
     try {
         req.session.destroy()
+        res.clearCookie("CoderCookie")
         res.send("Logout")
     } catch (error) {
         next(error)

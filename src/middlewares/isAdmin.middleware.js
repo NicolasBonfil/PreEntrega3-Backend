@@ -1,10 +1,11 @@
 const isAdmin = (req, res, next) => {
-	console.log(req.session.user);
-	if(req.session && req.session.role == "admin"){
-		return next()
-	}
+	// console.log(req.session.user);
+	//console.log(req.user);
+	// if(req.session && req.user.role == "admin"){
+	// 	return next()
+	// }
 
-	res.send("No pa")
+	res.send(req.user + " hola")
 	// return async(req, res, next) => {
     //     console.log(req.user);
 	// 	if(!req.user){

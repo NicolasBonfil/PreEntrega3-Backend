@@ -28,7 +28,7 @@ class CartsRepository{
 
     async addProductToCart(cid, pid){
         try{
-            return await cartsDAO.addProductToCart()
+            return await cartsDAO.addProductToCart(cid, pid)
         } catch {
             if(!cid || !pid){
                 throw new HttpError("Faltan datos", HTTP_STATUS.BAD_REQUEST)
@@ -43,7 +43,7 @@ class CartsRepository{
 
     async removeProductFromCart(cid, pid){
         try{
-            return await cartsDAO.removeProductFromCart()
+            return await cartsDAO.removeProductFromCart(cid, pid)
         } catch {
             if(!cid || !pid){
                 throw new HttpError("Faltan datos", HTTP_STATUS.BAD_REQUEST)
@@ -63,7 +63,7 @@ class CartsRepository{
 
     async updateCartProducts(cid, products){
         try{
-            return await cartsDAO.updateCartProducts()
+            return await cartsDAO.updateCartProducts(cid, products)
         } catch {
             if(!cid){
                 throw new HttpError("Faltan datos", HTTP_STATUS.BAD_REQUEST)
@@ -84,7 +84,7 @@ class CartsRepository{
 
     async updateProductQuantity(cid, pid, quantity){
         try{
-            return await cartsDAO.updateProductQuantity()
+            return await cartsDAO.updateProductQuantity(cid, pid, quantity)
         } catch {
             if(!cid || !pid || !quantity){
                 throw new HttpError("Faltan datos", HTTP_STATUS.BAD_REQUEST)
@@ -107,7 +107,7 @@ class CartsRepository{
 
     async deleteCartProducts(cid){
         try{
-            return await cartsDAO.deleteCartProducts()
+            return await cartsDAO.deleteCartProducts(cid)
         } catch {
             if(!cid){
                 throw new HttpError("Faltan datos", HTTP_STATUS.BAD_REQUEST)

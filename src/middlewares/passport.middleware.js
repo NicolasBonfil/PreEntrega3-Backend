@@ -8,7 +8,7 @@ const ExtractJwt = passportJwt.ExtractJwt
 
 const {SECRET_KEY} = CONFIG
 
-passport.use(new JwtStrategy(
+passport.use("jwt", new JwtStrategy(
     {
         jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
         secretOrKey: SECRET_KEY

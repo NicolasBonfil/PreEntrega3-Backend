@@ -34,11 +34,7 @@ router.get("/logout", (req, res) => {
     res.send("Sesion cerrada correctamente")
 })
 
-router.get("/carts/:cid", async (req, res) => {
-    const cid = req.params.cid
-    const products = await cartsController.getProducts(cid)
-    res.render("carts", {products})
-})
+router.get("/carts/:cid", cartsController.getCartProducts)
 
 router.get("/register", (req, res) => {
     res.render("register")

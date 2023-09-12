@@ -91,6 +91,10 @@ class CartDAO{
         await cartsModel.updateOne({_id: cart.id }, cart);
         return cart
     }
+
+    finalizarCompra = async () => {
+        
+    }
 }
 
 export default new CartDAO()
