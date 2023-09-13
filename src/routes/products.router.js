@@ -1,15 +1,26 @@
 import { Router } from "express"
 import productController from "../controllers/products.controller.js"
-import isAdmin from "../middlewares/isAdmin.middleware.js"
+import auth from "../middlewares/auth.middlewares.js"
+import passportControl from "../middlewares/passport-control.middleware.js"
+
+const authMidAdmin = [
+    passportControl("jwt"),
+    auth("admin")
+]
+
+const authMidUser = [
+    passportControl("jwt"),
+    auth("user")
+]
 
 class ProductRouter{
     constructor(){
         this.InicioProduct = Router()
-        this.InicioProduct.get("/", isAdmin, productController.getProducts)
+        this.InicioProduct.get("/", authMidUser, productController.getProducts)
         this.InicioProduct.get("/:id", productController.getProductById)
-        this.InicioProduct.post("/", productController.addProduct)
-        this.InicioProduct.put("/:pid", productController.updateProduct)
-        this.InicioProduct.delete("/:pid", productController.deleteProduct)
+        this.InicioProduct.post("/", authMidAdmin, productController.addProduct)
+        this.InicioProduct.put("/:pid", authMidAdmin, productController.updateProduct)
+        this.InicioProduct.delete("/:pid", authMidAdmin,  productController.deleteProduct)
     }
 
     getRouter(){

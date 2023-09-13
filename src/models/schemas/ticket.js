@@ -11,15 +11,14 @@ const ticketSchema = new mongoose.Schema({
     },
     purchase_datetime:{
         type: Date,
-        default: today.toLocaleString()
+        default: Date.now
     },
     amount: {
         type: Number,
         default: 1
     },
     purchaser:{
-        type : Schema.Types.ObjectId,
-        ref:"users",
+        type : String
     }
 })
 

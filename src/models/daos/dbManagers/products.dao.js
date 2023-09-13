@@ -2,7 +2,6 @@ import productsModel from "../../schemas/products.js";
 
 class ProductsDAO{
     constructor(){
-        console.log("Estamos trabajando con bd mongo");
     }
 
     getLeanProducts = async () => {

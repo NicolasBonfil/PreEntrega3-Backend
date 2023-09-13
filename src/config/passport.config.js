@@ -37,6 +37,8 @@ const initializePassport = async () => {
             let user;
             if(email === "admincoder@gmail.com" && password == "soyadmincoder"){
                 user = {
+                    first_name: "Admin",
+                    last_name: "Coder",
                     email: "admincoder@gmail.com",
                     password: "soyadmincoder",
                     role: "admin"

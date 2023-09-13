@@ -14,9 +14,8 @@ export const HTTP_STATUS = {
 };
  
 export class HttpError {
-    constructor(description, status = 500, details = null) {
+    constructor(description, status = 500) {
         this.description = description;
         this.status = status;
-        this.details = details;
     }
 }

@@ -27,7 +27,7 @@ class ProductsRepository{
             return await productsDAO.addProduct(product)
         } catch {
             const products = await productsDAO.getLeanProducts()
-            const existsProduct = products.find(p => p.code == code)
+            const existsProduct = products.find(p => p.code == product.code)
             if(existsProduct){
                 throw new HttpError("El producto ya esta registrado", HTTP_STATUS.BAD_REQUEST)
             }

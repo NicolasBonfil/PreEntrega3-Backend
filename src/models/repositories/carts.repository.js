@@ -8,7 +8,7 @@ class CartsRepository{
             return await cartsDAO.getCartProducts(cid) 
         } catch{
             if(!cid){
-                throw new HttpError("Faltan datos", HTTP_STATUS.BAD_REQUEST)
+                return new HttpError("Faltan datos", HTTP_STATUS.BAD_REQUEST)
             }
         
             const cart = await cartsModel.findOne({_id: cid})

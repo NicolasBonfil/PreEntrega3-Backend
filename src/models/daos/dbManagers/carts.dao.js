@@ -2,7 +2,6 @@ import cartsModel from "../../schemas/carts.js"
 
 class CartDAO{
     constructor(){
-        console.log("Estamos trabajando con bd mongo");
     }
 
     createCart = async () => {
@@ -24,9 +23,11 @@ class CartDAO{
         const cart = await cartsModel.findOne({_id: cid})
         const productIndex = cart.productsInCart.findIndex(p => p.product._id == pid);
 
+        const product = {_id: pid}
+
         if(productIndex == -1){
             let quantity = 1
-            cart.productsInCart.push({quantity, product: {_id: pid}})
+            cart.productsInCart.push({quantity, product})
         }else{
             cart.productsInCart[productIndex].quantity = parseInt(cart.productsInCart[productIndex].quantity)+1;
         }
@@ -90,10 +91,6 @@ class CartDAO{
 
         await cartsModel.updateOne({_id: cart.id }, cart);
         return cart
-    }
-
-    finalizarCompra = async () => {
-        
     }
 }
 

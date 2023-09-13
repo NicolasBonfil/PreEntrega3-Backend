@@ -2,7 +2,6 @@ import messagesModel from "../../schemas/messages.js";
 
 class MessagesDAO{
     constructor(){
-        console.log("Estamos trabajando con bd mongo");
     }
 
     getAllMessages = () => {

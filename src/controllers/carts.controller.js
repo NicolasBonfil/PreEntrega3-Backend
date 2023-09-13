@@ -1,15 +1,19 @@
 import cartsRepository from "../models/repositories/carts.repository.js"
-import { HTTP_STATUS, successResponse } from "../utils/responses.js"
+import { HTTP_STATUS, HttpError, successResponse } from "../utils/responses.js"
+import usersModel from "../models/schemas/Users.model.js"
+import ticketModel from "../models/schemas/ticket.js"
+import productsRepository from "../models/repositories/products.repository.js"
+import userModel from "../models/schemas/Users.model.js"
+import ticketRepository from "../models/repositories/ticket.repository.js"
+
 
 class CartController{
     async getCartProducts(req, res, next){
-        const cid = req.params.cid
         try {
-            const products = await cartsRepository.getCartProducts(cid)
-            const response = successResponse(products)
+            const products = await cartsRepository.getCartProducts(req.user.cart._id)
             
+            const response = successResponse(products)
             return res.status(HTTP_STATUS.OK).render("carts", {products})
-            //return res.status(HTTP_STATUS.OK).send(response)
         } catch (error){
             next(error)
         }
@@ -17,7 +21,15 @@ class CartController{
 
     async createCart(req, res, next){
         try {
+            const usuario = await usersModel.findOne({email: req.user.email})
+            
+            if(usuario.cart){
+                return res.send({status: "error", error: "El usuario ya tiene un carrito"})
+            }
             const newCart = await cartsRepository.createCart()
+
+            await usersModel.updateOne({email: req.user.email}, {$set: {cart: newCart}})
+
             const response = successResponse(newCart)
             res.status(HTTP_STATUS.CREATED).send(response)
         } catch (error){
@@ -31,6 +43,9 @@ class CartController{
 
         try {
             const addedProduct = await cartsRepository.addProductToCart(cid, pid)
+
+            await usersModel.updateOne({email: req.user.email}, {$set: {cart: addedProduct}})
+
             const response = successResponse(addedProduct)
             res.status(HTTP_STATUS.OK).send(response)
         } catch (error){
@@ -87,6 +102,55 @@ class CartController{
             const response = successResponse(removedProducts)
             res.status(HTTP_STATUS.OK).send(response)
         } catch (error){
+            next(error)
+        }
+    }
+
+    
+    async finalizarCompra(req, res, next){
+
+        const purchased = []
+        const notPurchased = []
+        
+        const products = req.user.cart.productsInCart
+        
+       async function filtrar(){
+            for(let p of products){
+                try {
+                    const product = await productsRepository.getProductById(p.product)
+                    if(product.stock < p.quantity){
+                        notPurchased.push({product: p.product, quantity: p.quantity})
+                    }else{
+                        purchased.push({product: product, quantity: p.quantity})
+                        await cartsRepository.removeProductFromCart(req.user.cart._id, p.product)
+                    }
+                } catch (error) {
+                    return new HttpError("Error al actualizar el carrito", HTTP_STATUS.BAD_REQUEST)
+                }
+            }
+        }
+
+        await filtrar()
+        
+        
+        const amount = purchased.reduce( (acc, p) => {
+            return (acc + p.product.price * p.quantity)
+        }, 0)
+        
+        try{
+            const user = await userModel.findOne({email: req.user.email})
+            user.cart.productsInCart = notPurchased
+            await userModel.updateOne({email: req.user.email}, user)
+
+            if(amount > 0){
+                const ticket = await ticketRepository.createTicket(req.user.email, amount, req.user.cart._id)
+                const response = successResponse(ticket)
+                console.log(notPurchased);
+
+                console.log(response);
+                return res.status(HTTP_STATUS.CREATED).send(response)
+            }
+        }catch (error){
             next(error)
         }
     }

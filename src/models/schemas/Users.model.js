@@ -8,12 +8,7 @@ const userSchema = new mongoose.Schema({
     email: String,
     password: String,
     role: String,
-    carts: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "carts"
-        }
-    ]
+    cart: {}
 })
 
 const userModel = mongoose.model(userCollection, userSchema)

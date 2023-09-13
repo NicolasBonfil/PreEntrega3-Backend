@@ -7,8 +7,8 @@ import passportControl from "../middlewares/passport-control.middleware.js"
 import auth from "../middlewares/auth.middlewares.js"
 
 const authMid = [
-    passportControl("jwt",
-    auth("user"))
+    passportControl("jwt"),
+    auth("user")
 ]
 
 const router = Router()
@@ -16,27 +16,6 @@ const router = Router()
 router.post("/register", passport.authenticate("register", {passReqToCallback: true, session: false, failureRedirect: "/api/session/failedRegister", failureMessage: true}), (req, res) => {
     res.status(200).send({status: "success", message: "Usuario registrado", payload: req.user._id})
 })
-
-// router.post("/login", passport.authenticate("login", {passReqToCallback: true, session: false, failureRedirect: "/api/session/failedLogin", failureMessage: true}), (req, res) => {
-//     const serialUser = {
-//         id: req.user.id,
-//         name: `${req.user.first_name}`,
-//         role: req.user.role,
-//         email: req.user.email
-//     }
-
-//     const email = req.user.email
-//     const role = req.user.role
-
-//     const access_token = generateToken({email, role: role})
-
-//     res.cookie("CoderCookie", access_token, {
-//         maxAge: 60*60*1000,
-//         httpOnly: true
-//     })
-
-//     res.status(200).send({status:"success", payload: serialUser})
-// })
 
 router.post("/login", passport.authenticate("login", {passReqToCallback: true, session: false, failureRedirect: "/api/session/failedLogin", failureMessage: true}), (req, res) => {
     const user = req.user
@@ -46,7 +25,6 @@ router.post("/login", passport.authenticate("login", {passReqToCallback: true, s
         maxAge: 60*60*1000,
         httpOnly: true
     })
-
     res.status(200).send({status:"success", payload: user})
 })
 
@@ -83,21 +61,28 @@ router.get("/githubCallback", passport.authenticate("github", {failureRedirect: 
 }
 
 
-router.post("/logout", (req, res, next) => {
-    try {
-        req.session.destroy()
-        res.clearCookie("CoderCookie")
-        res.send("Logout")
-    } catch (error) {
-        next(error)
-    }
+router.post("/logout", (req, res, next) => {        
+        try {
+            if(req.session){
+                req.session.destroy(err => {
+                    if(err){
+                        return next(err)
+                    }
+                })
+            }
+            res.clearCookie("CoderCookie")
+            res.send("Logout")
+        } catch (error) {
+            next(error)
+        }
     
 })
 
 
 router.get("/current", authMid, async (req, res) => {
     const user = req.user
-    res.render("current", {user})
+    res.send(user)
+    //res.render("current", {user})
 })
 
 export default router

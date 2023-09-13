@@ -4,5 +4,6 @@ export class SaveUserDTO{
         this.last_name = payload.user.last_name
         this.email = payload.user.email
         this.role = payload.user.role
+        this.cart = payload.user.cart
     }
 }
