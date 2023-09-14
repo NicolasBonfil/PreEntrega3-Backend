@@ -1,20 +1,26 @@
 import messagesModel from "../../schemas/messages.js";
 
 class MessagesDAO{
-    constructor(){
-    }
-
     getAllMessages = () => {
-        let messages = messagesModel.find().lean();
-        if(!messages){
-            messages = []
+        
+        try {
+            let messages = messagesModel.find().lean();
+            if(!messages){
+                messages = []
+            }
+            return messages
+        } catch (error) {
+            return error
         }
-        return messages
     }
 
     saveMessages = async (user, message) => {
-        let result = await messagesModel.create({user, message})
-        return result
+        try {
+            let result = await messagesModel.create({user, message})
+            return result     
+        } catch (error) {
+            return error
+        }
     }
 }
 

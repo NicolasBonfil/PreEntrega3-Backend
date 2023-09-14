@@ -57,7 +57,7 @@ class ProductController{
         
             const newProduct = await productRepository.addProduct(product)
             const response = successResponse(newProduct)
-            res.status(HTTP_STATUS.OK).send(response)
+            res.status(HTTP_STATUS.OK).send(newProduct)
         } catch (error) {
             next(error)
         }

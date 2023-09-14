@@ -10,8 +10,7 @@ import viewRouter from "./routes/views.router.js"
 import appRouter from "./routes/app.router.js"
 import initializePassport from "./config/passport.config.js"
 import CONFIG from "./config/config.js"
-import session from "express-session"
-import MongoStore from "connect-mongo"
+import errorMiddle from "./middlewares/indexControlError.js"
 
 
 const app = express()
@@ -37,6 +36,8 @@ app.set("view engine", "handlebars")
 
 
 app.use(cookieParser())
+app.use(errorMiddle)
+
 app.use("/api", appRouter)
 app.use("/", viewRouter)
 

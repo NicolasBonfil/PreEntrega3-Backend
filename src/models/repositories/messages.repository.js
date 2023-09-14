@@ -1,22 +1,50 @@
-import { HTTP_STATUS, HttpError } from "../../utils/responses.js"
+import customError from "../../errors/customError.js"
+import { dataBaseError, missingDataError } from "../../errors/info.js"
+import EError from "../../errors/num.js"
 import messagesDAO from "../daos/dbManagers/messages.dao.js"
 
 class MessagesRepository{
     async getAllMessages(){
         try {
             return await messagesDAO.getAllMessages()
-        } catch {
-            throw new HttpError("Error al obtener los mensajes", HTTP_STATUS.BAD_REQUEST)
+        } catch (error) {
+            return customError.createError({
+                name: "Error al obtener los mensajes",
+                cause: dataBaseError(error),
+                message: "Fallo en el intento de obtener los mensajes",
+                code: EError.DATABASE_ERROR
+            })
         }
     }
 
     async saveMessages(user, message){
         try {
             return await messagesDAO.saveMessages(user, message)
-        } catch {
-            if(!user || !message){
-                throw new HttpError("Faltan datos", HTTP_STATUS.BAD_REQUEST)
+        } catch (error) {
+            if(!user){
+                return customError.createError({
+                    name: "La informacion esta incompleta",
+                    cause: missingDataError("Nombre de usuario"),
+                    message: "Fallo en el intento de crear un mensaje",
+                    code: EError.INVALID_TYPES_ERROR
+                })
             }
+
+            if(!message){
+                return customError.createError({
+                    name: "La informacion esta incompleta",
+                    cause: missingDataError("Mensaje"),
+                    message: "Fallo en el intento de crear un mensaje",
+                    code: EError.INVALID_TYPES_ERROR
+                })
+            }
+
+            return customError.createError({
+                name: "Error al crear un mensaje",
+                cause: dataBaseError(error),
+                message: "Fallo en el intento de crear un mensajes",
+                code: EError.DATABASE_ERROR
+            })
         }
     }
 }
